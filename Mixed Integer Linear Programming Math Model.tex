@@ -1,0 +1,209 @@
+\documentclass[a4paper,12pt,titlepage]{article}
+\usepackage[utf8]{inputenc} 
+\usepackage{tikz,pgf}
+\usepackage{indentfirst}
+\usepackage{amsfonts}
+\usepackage[english]{babel}
+
+
+%URL links and bookmarks for PDF output file
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Mixed Integer Linear Programming Model},
+    bookmarks=true,
+    %pdfpagemode=FullScreen,
+}
+
+
+%Chapter solution
+\usepackage{standalone}
+%Rotation
+\usepackage{rotating}
+
+\usepackage{tabularx}
+\usepackage{multirow} 
+\usepackage{lscape}
+\usepackage{tikz}
+%Insert PDF files
+\usepackage[final]{pdfpages}
+%--Packages--
+
+\usepackage{eurosym}
+\usepackage{graphicx} \usepackage{verbatim}
+\usepackage{graphics}
+\usepackage{tikz,pgf}
+\usepackage{indentfirst}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsmath,amssymb,amsthm,textcomp}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{geometry}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{amsmath,amssymb,mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx,color,listings}
+\frenchspacing 
+\usepackage{geometry}
+\usepackage{rotating}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{listings}
+%Cool maths printing
+\usepackage{amsmath}
+%PseudoCode
+\usepackage{algorithm2e}
+
+
+
+%Document
+ 
+\begin{document}
+\section*{Math Formulation}
+\subsection*{Sets}
+- $P$ = set of products (\textit{index $i$})\\
+- $T$ = set of periods in time horizion (\textit{index $t$})\\
+- $J$ = set of vehicles (\textit{index $j$})
+\subsection*{Parameters}
+- $D_{ij}$ = Demand of product $i$ at time $t$;\\
+- $R_i$ = Quantity of product $i$ that can be loaded in a track;\\
+- $Y_i$ = Initial stock level of product $i$;\\
+- $K_j$ = Capacity of truck $j$;\\
+- $M$ = Very large positive number;\\
+- $C^{\alpha}$ = Set up cost for a truck;\\
+- $C^{\delta}$ = Penalty costs for a truck's loss of capacity;\\
+- $C^{\lambda}$ = Cost of unbalanced stock;\\
+- $LB_{it}$ = Minimum level for each product $i$ in each time period $t$;\\
+- $UB_{it}$ = Maximum level for each product $i$ in each time period $t$;
+\subsection*{Variables}
+ - $y_{it}$ = Stock level of product $i$ at time period $t$; \,\,\,$\forall i\in I,\,t\in T$\\
+  - $v_{ijt}$ = Quantity of product $i$ on truck $j$ at time period $t$; \,\,\,$\forall i\in I,\,j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace$\\
+  - $\varepsilon_{jt}$ = Number of different variants on truck $j$ at time period $t$; \,\,\,$\forall j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace$\\
+  - $\lambda_t$ = Level of balanced stock of all the products at time period $t$;\,\,\,$\forall t\in T\backslash\left\lbrace 0\right\rbrace$\\
+   \[
+  - \,\alpha_{jt}=
+  \left\{
+  \begin{array}{ll}
+  1\quad\mbox{if truck $j$ is used at time period $t$;} \,\,\,\forall j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace \qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad \\
+  0\quad\mbox{otherwiese}\\
+  \end{array}
+  \right.
+  \]
+    \[
+  - \,\delta_{ijt}=
+  \left\{
+  \begin{array}{ll}
+  1\quad\mbox{if one product $i$ is on truck $j$ at time period $t$;} \,\,\,\forall i\in I,\,j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace \qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad\qquad \\
+  0\quad\mbox{otherwiese}\\
+  \end{array}
+  \right.
+  \]
+  
+  \newpage
+ 
+ \begin{equation*}
+ min \sum_{t\in T\backslash\left\lbrace 0\right\rbrace}\sum_{j\in J} \alpha_{jt}\cdot C^{\alpha} +
+  \sum_{t\in T\backslash\left\lbrace 0\right\rbrace}\sum_{j\in J} C^{\delta}\cdot \left(\varepsilon_{jt} - 1 \right) +
+   \sum_{t\in T\backslash\left\lbrace 0\right\rbrace}\lambda_t\cdot C^\lambda
+  \tag{1}
+  \end{equation*}
+  
+ \begin{equation*}
+ 	y_{i0} = Y_i\qquad\forall i\in I
+ 	\tag{2}
+ \end{equation*}
+ 
+  \begin{equation*}
+ y_{it} = y_{i,t-1} - D_{it} +\sum_{j\in J} v_{ijt} \qquad \forall i\in I,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{3}
+ \end{equation*}
+ 
+  \begin{equation*}
+ LB_{it} \leq y_{it} \leq UB_{it} \qquad \forall i\in I,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{4}
+ \end{equation*}
+ 
+ \begin{equation*}
+ \left(1-\lambda_t\right) \leq\dfrac{UB_{it} -y_{it}}{UB_{it} - LB_{it}} \qquad \forall i\in I,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{5}
+ \end{equation*}
+ 
+  \begin{equation*}
+ v_{ijt} \leq M\cdot \delta_{ijt} \qquad \forall i\in I,\,j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{6}
+ \end{equation*}
+ 
+  \begin{equation*}
+ \sum_{i\in I} \delta_{ijt} \leq \varepsilon_{jt} \qquad \forall j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{7}
+ \end{equation*}
+ 
+  \begin{equation*}
+ \varepsilon_{jt}\geq 1 \qquad \forall j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{8}
+ \end{equation*}
+ 
+  \begin{equation*}
+ K_j\cdot \alpha_{jt} - \left( \varepsilon_{jt}-1\right) =\sum_{i\in I} \dfrac{v_{ijt}}{R_i} \qquad \forall j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{9}
+ \end{equation*}
+ 
+ \begin{equation*}
+ \lambda_t \in \left[0,1 \right] \qquad \forall t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{10}
+ \end{equation*}
+ 
+  \begin{equation*}
+ y_{it} \geq 0\,\,\,\text{and integer} \qquad \forall j\in J,\,t\in T
+ \tag{11}
+ \end{equation*}
+ 
+\begin{equation*}
+ v_{ijt} \geq 0\,\,\,\text{and integer} \qquad \forall i\in I, j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{12}
+ \end{equation*}
+ 
+  \begin{equation*}
+  \varepsilon_{jt} \geq 0\,\,\,\text{and integer} \qquad \forall j\in J,\,t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{13}
+ \end{equation*}
+ 
+  \begin{equation*}
+ \delta_{ijt} \in \left\lbrace 0,1 \right\rbrace \qquad \forall i\in I,\, j\in J,\, t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{14}
+ \end{equation*}
+ 
+  \begin{equation*}
+ \alpha_{jt} \in \left\lbrace 0,1 \right\rbrace  \qquad \forall j\in J,\, t\in T\backslash\left\lbrace 0\right\rbrace
+ \tag{15}
+ \end{equation*}
+ 
+ \newpage
+ The linear objective function (1) consists in minimizing total supply costs.\\
+ The initial inventory levels of products are known (2).\\ Continuity constraints (3) apply to the model. \\
+ The stock level reached at the end of a period must be above a
+ minimum level without exceeding a maximum level (4).\\ Balancing stock levels is
+ determined as a percentage according to the values of the stock level limits (5).\\
+ By Constraint (6), we know if product $i$ is on truck $j$ at time period $t$ .\\
+ Constraints (7)-(8) determine the number of variants loaded and the penalties associated with
+ each truck used.\\
+  Constraint (9), it is assumed that a truck’s capacity in
+ racks less its capacity penalty is equal to the racks loaded onto a truck.\\
+ Constraints (10)-(15) concern variables' domain.
+ 
+ 
+ 
+ 
+ 
+ 
+\end{document}
+
+
